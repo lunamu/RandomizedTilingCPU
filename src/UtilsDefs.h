@@ -20,6 +20,7 @@ using namespace std;
 #define LEAFLEN (40*r)
 
 
+
 inline double min_(double a, double b)
 {
 	return a < b ? a : b;
@@ -77,6 +78,7 @@ struct BBox
 	double ymax;
 };
 
+const BBox ide(0.0, 1.0, 0.0, 1.0);
 const BBox gUnitGrid(0, 1, 0, 1);
 
 inline bool within(BBox b, Point2D q)

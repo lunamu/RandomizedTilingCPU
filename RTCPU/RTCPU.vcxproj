@@ -121,12 +121,16 @@
   <ItemGroup>
     <ClCompile Include="..\src\KD_tree.cpp" />
     <ClCompile Include="..\src\RandomizedTiling.cpp" />
+    <ClCompile Include="..\src\Tiller.cpp" />
     <ClCompile Include="..\src\UniformGrids.cpp" />
+    <ClCompile Include="..\src\UniformGridsCompact.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\KD_tree.h" />
     <ClInclude Include="..\src\RandomizedTiling.h" />
+    <ClInclude Include="..\src\Tiller.h" />
     <ClInclude Include="..\src\UniformGrids.h" />
+    <ClInclude Include="..\src\UniformGridsCompact.h" />
     <ClInclude Include="..\src\UtilsDefs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

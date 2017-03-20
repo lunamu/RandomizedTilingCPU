@@ -78,6 +78,33 @@ public:
 	//attention: parameter is radius
 	void test_maximal(double radius);
 
+	int getCount(){int count = 0;
+		for (int i = 0; i < dimension_edge*dimension_edge; i++){
+			for (int j = 0; j < grids[i].num; j++){
+				if (grids[i].valid[j])count++;
+			}
+		}return count;
+	}
+	void printToFile(string output_file_name)
+	{
+		ofstream fout_result(output_file_name);
+		for (int i = 0; i <dimension_edge *dimension_edge; i++)
+		{
+			if (grids[i].num >= 1)
+			{
+				for (int j = 0; j < grids[i].num; j++)
+				{
+					if (grids[i].valid[j])
+					{
+						fout_result << grids[i].points[j].x << " " << grids[i].points[j].y << endl;
+
+					}
+
+				}
+			}
+		}
+	}
+
 	//print all grid information
 	void print();
 	Grid* grids;

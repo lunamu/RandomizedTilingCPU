@@ -20,8 +20,9 @@ public:
 	KDnode* right;
 };
 
+
 KDnode* build(Point2D* points, int num, int depth);
 void traverse(KDnode* root, vector<Point2D>& result, BBox query);
-void traverse_and_classify(KDnode*root, vector<Point2D>& result, vector<int>& priority, BBox query, Point2D offset,float ratio);
+//void traverse_and_classify(KDnode*root, vector<Point2D>& result, vector<int>& priority, BBox query, Point2D offset,float ratio);
 void traverse_with_priority(KDnode* root, vector<Point2D>& result, vector<int>& priority, BBox query, int pri);
 #endif
