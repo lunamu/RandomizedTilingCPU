@@ -29,11 +29,15 @@ public:
 	{
 		points_in_grid.printToFile(output_file_name);
 	}
-
+	void test_maximal(double radius);
+	void test_conflict(double radius);
 	BBox bbox;
 	KDnode* kd_tree;
 	UniformGrids points_in_grid;
 	vector<Point2D> result;
 	vector<int> priority;
+	vector<Point2D> gap_points;
+	vector<Point2D> conflict_points;
+	
 	//vector<Point2D> pattern;
 };

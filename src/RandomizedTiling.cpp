@@ -83,9 +83,10 @@ int main(int argc, char* argv[])
 	start = clock(), diff;
 	//Timing
 	tiller.eliminate_for_maximal(radius);
+	tiller.test_conflict(radius);
 	//points_in_grid.eliminate_for_maximal_batch(radius);
 
-
+	
 	int count = tiller.getGridCount();
 	diff = clock() - start;
 	msec = diff * 1000 / CLOCKS_PER_SEC;
@@ -95,7 +96,8 @@ int main(int argc, char* argv[])
 	tiller.printToFile(result_filename);
 
 
-	//points_in_grid.test_maximal(radius);
+
+	tiller.test_maximal(radius);
 
 	UniformGrids ugrids(1.0 / (2 * 0.005));
 	for (int i = 0; i < pattern.size(); i++)

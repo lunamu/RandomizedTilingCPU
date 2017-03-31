@@ -16,6 +16,34 @@ inline int dimensionCheck(BBox bbox, double r)//consider leave a minimum leaf no
 	else if (y == 1) return YAXIS;
 	else return 9;
 }
+void Tiller::test_conflict(double radius) 
+{
+	ofstream gap_file("C:/Users/mu/Dropbox/MATLAB/conf.txt");
+	for (int grid_idx = 0; grid_idx < points_in_grid.width * points_in_grid.height; grid_idx++)
+	{
+		for (int in_idx = 0; in_idx < points_in_grid.grids[grid_idx].num; in_idx++)//iteration of all points
+		{
+			if (points_in_grid.grids[grid_idx].valid[in_idx])
+			{
+				Point2D& cur_point = points_in_grid.grids[grid_idx].points[in_idx];
+				if (!points_in_grid.dartSearch(cur_point, 2.2 * radius))conflict_points.push_back(cur_point);
+			}
+		}
+	}
+	for (int i = 0; i < conflict_points.size(); i++)
+	{
+		gap_file << conflict_points[i].x << " " << conflict_points[i].y << endl;
+	}
+	//printf("done, gaps above\n");
+
+
+}
+void Tiller::test_maximal(double radius)
+{
+	//for each valid point in the grid, search range 4*r
+	//test if circum center within 2*r from any points.
+	
+}
 
 
 void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, double radius)
