@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
 	{
 		ugrids.insert(pattern[i]);
 	}
-	ugrids.test_maximal(0.005);
+	//ugrids.test_maximal(0.005);
 
 
 	cin >> diff;
