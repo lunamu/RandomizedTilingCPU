@@ -11,12 +11,12 @@ class Tiller {
 
 public:
 	Tiller() {};
-	Tiller(BBox bbox_, KDnode* kd_, float radius): bbox(bbox_),kd_tree(kd_), points_in_grid(1.0 / (2 * radius) ){ }
+	Tiller(BBox bbox_, KDnode* kd_, float radius, string rlt): bbox(bbox_),kd_tree(kd_), points_in_grid(1.0 / (2 * radius) ), result_dir(rlt){ }
 	
 	~Tiller() {};
-	void insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, double radius);
+	void insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, double radius, int depth);
 	void eliminate_for_maximal(double radius);
-	void process_pivot_point(Point2D& pivotPoint, int pri, double radius, int grid_idx, int ingrid_idx);
+	void process_pivot_point(Point2D& pivotPoint, int pri, double radius, int grid_idx, int ingrid_idx, int chain);
 	void DivideConquerTiling(BBox bbox, double r, int axis, float ratio);
 	void tilePoints(BBox bbox,Point2D offset, float ratio){
 		traverse_and_classify(kd_tree,bbox, offset, ratio);
@@ -39,5 +39,10 @@ public:
 	vector<Point2D> gap_points;
 	vector<Point2D> conflict_points;
 	
+	vector<Point2D> chain_points;
+
+	//point buffer to test for gaps;
+	vector<Point2D> pointTestBuffer;
+	string result_dir;
 	//vector<Point2D> pattern;
 };

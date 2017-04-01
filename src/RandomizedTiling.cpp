@@ -40,10 +40,11 @@ int main(int argc, char* argv[])
 {
 	float ratio = atof(argv[3]);
 	double radius = 0.005 / ratio;
+	srand(0);
 	//srand((unsigned)time(NULL));
-	string pattern_filename = argv[1];
-	string result_filename = argv[2];
-	ifstream fin_pattern(pattern_filename);
+	string pattern_dir = argv[1];
+	string result_dir = argv[2];
+	ifstream fin_pattern(pattern_dir+"maximal.txt");
 	
 
 	//build kd-tree for pattern
@@ -61,10 +62,9 @@ int main(int argc, char* argv[])
 	//Tile them all in one UniformGrid
 
 
-
 	clock_t start = clock(), diff;
 	//Timing
-	Tiller tiller(original_bbox, kd_tree, radius);
+	Tiller tiller(original_bbox, kd_tree, radius, result_dir);
 	tiller.DivideConquerTiling(original_bbox, radius, XAXIS, ratio);
 	//DNCPoisson(original_bbox, points, priority, radius, XAXIS,ratio);
 	
@@ -73,9 +73,20 @@ int main(int argc, char* argv[])
 	printf("Ratio: %f\nDNC taken %d seconds %d milliseconds\n", ratio, msec / 1000, msec % 1000);
 	//printf("%f %d ", ratio, msec);
 
-	
+
+	//ofstream all_points(result_dir+"allp");
+	//ofstream p00(result_dir+"p00");
+	//ofstream p0(result_dir+"p0");
+	//ofstream p1(result_dir+"p1");
+	//ofstream p2(result_dir+"p2");
+
 	for (int i = 0; i < tiller.result.size(); i++)
 	{
+		/*all_points << tiller.result[i].x << " " << tiller.result[i].y << endl;
+		if (tiller.priority[i] == -1)p00 << tiller.result[i].x << " " << tiller.result[i].y << endl;
+		if (tiller.priority[i] == 0)p0 << tiller.result[i].x << " " << tiller.result[i].y << endl;
+		if (tiller.priority[i] == 1)p1 << tiller.result[i].x << " " << tiller.result[i].y << endl;
+		if (tiller.priority[i] == 2)p2 << tiller.result[i].x << " " << tiller.result[i].y << endl;*/
 		tiller.points_in_grid.insert(tiller.result[i], tiller.priority[i]);
 	}
 
@@ -93,7 +104,7 @@ int main(int argc, char* argv[])
 	//printf("%d %d\n", count, msec);
 	printf("Points:%d\nEliminate for Maximal take %d seconds %d milliseconds\n",count, msec / 1000, msec % 1000);
 
-	tiller.printToFile(result_filename);
+	tiller.printToFile(result_dir+"a");
 
 
 
