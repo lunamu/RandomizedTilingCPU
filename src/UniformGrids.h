@@ -6,7 +6,7 @@
 const bool VALID = true;
 const bool INVALID = false;
 
-const int MAX_PER_GRID = 20;
+const int MAX_PER_GRID = 400;
 using namespace std;
 
 struct Grid
@@ -21,7 +21,7 @@ struct Grid
 		num = 0;
 	}
 };
-const double EPS = 0.000001;
+const double EPS = 0.0000001;
 
 //2D UniformGrids class
 class UniformGrids
@@ -43,6 +43,7 @@ public:
 	//return false if there are some points within range.otherwise return true;
 	bool dartSearch(Point2D point, double range);
 	bool dartSearch(Point2D point, double range, bool& same);
+	bool dartSearch_other(Point2D point, double range);
 	//push all points withing the ring (from inner range to outer range) to the buffer buf
 	void ringSearch_buffer(Point2D point, double range_inner, double range_outer, vector<Point2D>& buf);	
 	void dartSearch_buffer(Point2D point, double range, vector<Point2D>& buf);

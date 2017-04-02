@@ -65,8 +65,8 @@ bool UniformGrids::dartSearch(Point2D point, double range)
 				{
 					if (!grids[idx].valid[i])continue;
 					double distSquare = DistanceSquared(point, grids[idx].points[i]);
-					if (distSquare == 0.0)continue;
-					//if (distSquare < 1e-20)continue;
+					//if (abs(distSquare - 0.0) < EPS)continue;
+					if (distSquare < 1e-20)continue;
 					else if (distSquare < range * range)
 					{
 						return false;
@@ -77,7 +77,39 @@ bool UniformGrids::dartSearch(Point2D point, double range)
 	}
 	return true;
 }
+bool UniformGrids::dartSearch_other(Point2D point, double range)
+{
+	unsigned int x_start = max(0, (point.x - range - gridBbox.xmin)) * width;
+	unsigned int x_end = min(gridBbox.xmax - EPS - gridBbox.xmin, (point.x + range - gridBbox.xmin)) * width;
+	unsigned int y_start = max(0, (point.y - range - gridBbox.ymin)) * height;
+	unsigned int y_end = min(gridBbox.ymax - EPS - gridBbox.ymin, (point.y + range - gridBbox.ymin)) * height;	
+	for (int i = x_start; i <= x_end; i++)
+	{
+		for (int j = y_start; j <= y_end; j++)
+		{
+			unsigned int idx = width * j + i;
+			if (grids[idx].num <= 0)
+			{
+				continue;
+			}
+			else
+			{
+				for (int i = 0; i < grids[idx].num; i++)
+				{
+					if (!grids[idx].valid[i])continue;
+					double distSquare = DistanceSquared(point, grids[idx].points[i]);				
+					//if (distSquare < 1e-20)continue;
+					if (distSquare < range * range)
+					{
 
+						return false;
+					}
+				}
+			}
+		}
+	}
+	return true;
+}
 bool UniformGrids::dartSearch(Point2D point, double range, bool& same)
 {
 	unsigned int x_start = max(0, (point.x - range - gridBbox.xmin)) * width;
@@ -618,12 +650,6 @@ void UniformGrids::process_pivot_point_corner(Point2D& pivotPoint, int pri, doub
 			return;
 		}
 	}
-	//cout << "Pivot point: " << pivotPoint.x << " " << pivotPoint.y << endl;
-	//cout << "Conflict point: " << endl;
-	/*for (int i = 0; i < conflictBuffer.size(); i++)
-	{
-	cout << conflictBuffer[i].x << " " << conflictBuffer[i].y << endl;
-	}*/
 	for (int i = 0; i < conflictBuffer.size(); i++)
 	{
 		int gidx = conflictGrididx[i];

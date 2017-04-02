@@ -89,27 +89,76 @@ void Tiller::test_maximal(double radius)
 void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, double radius, int depth)
 {
 	//vector<Point2D> pointTestBuffer;
-	if (depth == 0)points_in_grid.dartSearch_buffer(conflictPoint, 4 * radius, pointTestBuffer);
-	
-	for (int i = 0; i < pointTestBuffer.size(); i++)
+	if (depth == 0)
 	{
-		for (int j = i + 1; j < pointTestBuffer.size(); j++)
+		points_in_grid.dartSearch_buffer(conflictPoint, 4 * radius, pointTestBuffer);
+		pointTestBuffer.push_back(pivotPoint);
+	}
+
+	for (int k = pointTestBuffer.size() - 1; k >= 2; k--)
+	{
+		for (int i = k - 1; i >= 1; i--)
 		{
-			Point2D fp = pointTestBuffer[i]; Point2D sp = pointTestBuffer[j];
-			Point2D center; double cir_r2;
-			Circumcenter(pivotPoint, fp, sp, center, cir_r2);
-			if (center.x > points_in_grid.gridBbox.xmax || center.x < points_in_grid.gridBbox.xmin || center.y > points_in_grid.gridBbox.ymax || center.y < points_in_grid.gridBbox.ymin)continue;
-			if (points_in_grid.dartSearch(center, 2 * radius)) 
+			for (int j = i - 1; j >= 0; j--)
 			{
-				points_in_grid.insert(center);
-				//pointTestBuffer.push_back(center);
-				pivotPoint = center;
-				goto label;
+				if (i == j || j == k || i == k)continue;
+				Point2D fp = pointTestBuffer[k]; Point2D sp = pointTestBuffer[i]; Point2D tp = pointTestBuffer[j];
+				Point2D center; double cir_r2;
+				if (Circumcenter(fp, sp, tp, center, cir_r2))
+				{
+					if (center.x > points_in_grid.gridBbox.xmax || center.x < points_in_grid.gridBbox.xmin || center.y > points_in_grid.gridBbox.ymax || center.y < points_in_grid.gridBbox.ymin)continue;
+					if (points_in_grid.dartSearch_other(center, 2 * radius))
+					{
+						points_in_grid.insert(center);
+						//points_in_grid.dartSearch_other(center, 2 * radius);
+						//points_in_grid.dartSearch(center, 2 * radius);
+						//pointTestBuffer.push_back(center);
+						//return;
+						//pivotPoint = center;
+						//return;
+						
+					}
+				}
+				else continue;
+
 			}
 		}
 	}
-label:	return;
+	return;
 	//
+//vector<Point2D> center_buf;
+//label:
+//	for (int k = pointTestBuffer.size() - 1; k >= 2; k--)
+//	{
+//		for (int i = k - 1; i >= 1; i--)
+//		{
+//			for (int j = i - 1; j >= 0; j--)
+//			{
+//				if (i == j || j == k || i == k)continue;
+//				Point2D fp = pointTestBuffer[k]; Point2D sp = pointTestBuffer[i]; Point2D tp = pointTestBuffer[j];
+//				Point2D center; double cir_r2;
+//				if (Circumcenter(fp, sp, tp, center, cir_r2))
+//				{					
+//					if (center.x > points_in_grid.gridBbox.xmax || center.x < points_in_grid.gridBbox.xmin || center.y > points_in_grid.gridBbox.ymax || center.y < points_in_grid.gridBbox.ymin)continue;
+//					if (points_in_grid.dartSearch_other(center, 2 * radius))
+//					{
+//						points_in_grid.insert(center);
+//						//points_in_grid.dartSearch_other(center, 2 * radius);
+//						//points_in_grid.dartSearch(center, 2 * radius);
+//						//pointTestBuffer.push_back(center);
+//						//return;
+//						//pivotPoint = center;
+//						//return;
+//					    goto label;
+//					}
+//				}
+//				else continue;
+//
+//			}
+//		}
+//	}
+//	return;
+//	//
 
 	//for (auto first_point = pointTestBuffer.begin(); first_point != pointTestBuffer.end(); first_point++)
 	//{
@@ -153,8 +202,6 @@ label:	return;
 
 	//	}
 	//}
-
-
 }
 
 void Tiller::process_pivot_point(Point2D& pivotPoint, int pri, double radius, int grid_idx, int ingrid_idx, int chain)
