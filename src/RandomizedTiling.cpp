@@ -89,7 +89,11 @@ int main(int argc, char* argv[])
 		if (tiller.priority[i] == 2)p2 << tiller.result[i].x << " " << tiller.result[i].y << endl;*/
 		tiller.points_in_grid.insert(tiller.result[i], tiller.priority[i]);
 	}
-
+	ofstream num(result_dir + "num");
+	for (int i = 0; i < tiller.points_in_grid.dimension_edge * tiller.points_in_grid.dimension_edge; i++)
+	{
+		num << tiller.points_in_grid.grids[i].num << endl;
+	}
 
 	start = clock(), diff;
 	//Timing

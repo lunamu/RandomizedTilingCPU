@@ -44,5 +44,12 @@ public:
 	//point buffer to test for gaps;
 	vector<Point2D> pointTestBuffer;
 	string result_dir;
+
+
+	//Used in process pivot points
+	vector<Point2D> conflictBuffer;
+	vector<int> conflictPri;
+	vector<int> conflictGrididx;
+	vector<int> conflictIngrid_idx;
 	//vector<Point2D> pattern;
 };

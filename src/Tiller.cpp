@@ -89,17 +89,26 @@ void Tiller::test_maximal(double radius)
 void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, double radius, int depth)
 {
 	//vector<Point2D> pointTestBuffer;
+	/*if (depth == 0)
+	{
+		points_in_grid.dartSearch_buffer(conflictPoint, 4 * radius, pointTestBuffer);
+		pointTestBuffer.push_back(pivotPoint);
+	}*/
+	
+	//vector<Point2D> ptb;
+
 	if (depth == 0)
 	{
 		points_in_grid.dartSearch_buffer(conflictPoint, 4 * radius, pointTestBuffer);
 		pointTestBuffer.push_back(pivotPoint);
 	}
-
+	if (pointTestBuffer.size() < 2)return;
 	for (int k = pointTestBuffer.size() - 1; k >= 2; k--)
 	{
 		for (int i = k - 1; i >= 1; i--)
 		{
 			for (int j = i - 1; j >= 0; j--)
+
 			{
 				if (i == j || j == k || i == k)continue;
 				Point2D fp = pointTestBuffer[k]; Point2D sp = pointTestBuffer[i]; Point2D tp = pointTestBuffer[j];
@@ -110,6 +119,8 @@ void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, double rad
 					if (points_in_grid.dartSearch_other(center, 2 * radius))
 					{
 						points_in_grid.insert(center);
+						//return;
+						insert_in_gap(center, center, radius, depth + 1);
 						//points_in_grid.dartSearch_other(center, 2 * radius);
 						//points_in_grid.dartSearch(center, 2 * radius);
 						//pointTestBuffer.push_back(center);
@@ -125,6 +136,36 @@ void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, double rad
 		}
 	}
 	return;
+	//for (int k = pointTestBuffer.size() - 1; k >= 2; k--)
+	//{
+	//	for (int i = k - 1; i >= 1; i--)
+	//	{
+	//		for (int j = i - 1; j >= 0; j--)
+	//		{
+	//			if (i == j || j == k || i == k)continue;
+	//			Point2D fp = pointTestBuffer[k]; Point2D sp = pointTestBuffer[i]; Point2D tp = pointTestBuffer[j];
+	//			Point2D center; double cir_r2;
+	//			if (Circumcenter(fp, sp, tp, center, cir_r2))
+	//			{
+	//				if (center.x > points_in_grid.gridBbox.xmax || center.x < points_in_grid.gridBbox.xmin || center.y > points_in_grid.gridBbox.ymax || center.y < points_in_grid.gridBbox.ymin)continue;
+	//				if (points_in_grid.dartSearch_other(center, 2 * radius))
+	//				{
+	//					points_in_grid.insert(center);
+	//					//points_in_grid.dartSearch_other(center, 2 * radius);
+	//					//points_in_grid.dartSearch(center, 2 * radius);
+	//					//pointTestBuffer.push_back(center);
+	//					//return;
+	//					//pivotPoint = center;
+	//					//return;
+	//					
+	//				}
+	//			}
+	//			else continue;
+
+	//		}
+	//	}
+	//}
+	//return;
 	//
 //vector<Point2D> center_buf;
 //label:
@@ -207,10 +248,10 @@ void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, double rad
 void Tiller::process_pivot_point(Point2D& pivotPoint, int pri, double radius, int grid_idx, int ingrid_idx, int chain)
 {
 
-	vector<Point2D> conflictBuffer;
-	vector<int> conflictPri;
-	vector<int> conflictGrididx;
-	vector<int> conflictIngrid_idx;
+	conflictBuffer.clear();
+	conflictPri.clear();
+	conflictGrididx.clear();
+	conflictIngrid_idx.clear();
 	points_in_grid.dartSearch_buffer_pri(pivotPoint, 2 * radius, conflictBuffer, conflictPri, conflictGrididx, conflictIngrid_idx);
 	for (int i = 0; i < conflictBuffer.size(); i++)
 	{
@@ -246,22 +287,24 @@ void Tiller::eliminate_for_maximal(double radius)
 {
 	for (int grid_idx = 0; grid_idx < points_in_grid.width * points_in_grid.height; grid_idx++)
 	{
-		if (points_in_grid.grids[grid_idx].num > 0)
+		int num = points_in_grid.grids[grid_idx].num;
+		if (num > 0)
 		{
-			for (int in_idx = 0; in_idx < points_in_grid.grids[grid_idx].num; in_idx++)//iteration of all points
+			for (int in_idx = 0; in_idx <num; in_idx++)//iteration of all points
 			{
+				if (!points_in_grid.grids[grid_idx].valid[in_idx])continue;
 				Point2D& cur_point = points_in_grid.grids[grid_idx].points[in_idx];
 				int cur_pri = points_in_grid.grids[grid_idx].priority[in_idx];
 				int chain = 0;
 				process_pivot_point(cur_point, cur_pri, radius, grid_idx, in_idx, chain);
 			}
 		}
-	}
+	}/*
 	ofstream chain(result_dir + "chain");
 	for (int i = 0; i < chain_points.size(); i++)
 	{
 		chain << chain_points[i].x << " " << chain_points[i].y << endl;
-	}
+	}*/
 }
 
 void Tiller::traverse_and_classify(KDnode*root, BBox query, Point2D offset, float ratio)

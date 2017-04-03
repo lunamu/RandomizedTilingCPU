@@ -6,7 +6,7 @@
 const bool VALID = true;
 const bool INVALID = false;
 
-const int MAX_PER_GRID = 400;
+const int MAX_PER_GRID = 20;
 using namespace std;
 
 struct Grid
