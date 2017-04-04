@@ -120,7 +120,7 @@ void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, double rad
 					{
 						points_in_grid.insert(center);
 						//return;
-						insert_in_gap(center, center, radius, depth + 1);
+						//insert_in_gap(center, center, radius, depth + 1);
 						//points_in_grid.dartSearch_other(center, 2 * radius);
 						//points_in_grid.dartSearch(center, 2 * radius);
 						//pointTestBuffer.push_back(center);
