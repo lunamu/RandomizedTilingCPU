@@ -6,7 +6,7 @@
 const bool VALID = true;
 const bool INVALID = false;
 
-const int MAX_PER_GRID = 20;
+const int MAX_PER_GRID = 8;
 using namespace std;
 
 struct Grid
@@ -21,7 +21,7 @@ struct Grid
 		num = 0;
 	}
 };
-const double EPS = 0.0000001;
+const Float EPS = 0.0000001;
 
 //2D UniformGrids class
 class UniformGrids
@@ -41,43 +41,43 @@ public:
 	void insert(Point2D point, int priority = 0);
 
 	//return false if there are some points within range.otherwise return true;
-	bool dartSearch(Point2D point, double range);
-	bool dartSearch(Point2D point, double range, bool& same);
-	bool dartSearch_other(Point2D point, double range);
+	bool dartSearch(Point2D point, Float range);
+	bool dartSearch(Point2D point, Float range, bool& same);
+	bool dartSearch_other(Point2D point, Float range);
 	//push all points withing the ring (from inner range to outer range) to the buffer buf
-	void ringSearch_buffer(Point2D point, double range_inner, double range_outer, vector<Point2D>& buf);	
-	void dartSearch_buffer(Point2D point, double range, vector<Point2D>& buf);
+	void ringSearch_buffer(Point2D point, Float range_inner, Float range_outer, vector<Point2D>& buf);	
+	void dartSearch_buffer(Point2D point, Float range, vector<Point2D>& buf);
 
 	//push all conflict points to conflictbuffer, record their priority, grididx and in_grid idx;
-	void dartSearch_buffer_pri(Point2D point, double range, vector<Point2D>& conflictBuffer,
+	void dartSearch_buffer_pri(Point2D point, Float range, vector<Point2D>& conflictBuffer,
 		vector<int>& conflictPri, vector<int>& conflictGrididx, vector<int>& conflictIngrid_idx);
 	
 	//insert in the gap, for pivot point and its corresponding conflict points
-	void insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, double radius);
+	void insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, Float radius);
 
 	//for each pivot_point, do process in the paper
 	//attention: parameter is radius
-	void process_pivot_point(Point2D& pivotPoint, int pri, double radius, int grid_idx, int ingrid_idx);
+	void process_pivot_point(Point2D& pivotPoint, int pri, Float radius, int grid_idx, int ingrid_idx);
 	
 	//wrapper function, call this to eliminate all conflict points, and insert points for maximal coverage.
 	//attention: parameter is radius
-	void eliminate_for_maximal(double radius);
+	void eliminate_for_maximal(Float radius);
 
 	//wrapper function, climinate all conflict points, insert points for maximal coverage.
 	//This function will insert points on corners.
-	void eliminate_for_maximal_corner(double radius);
+	void eliminate_for_maximal_corner(Float radius);
 
-	void process_pivot_point_corner(Point2D& pivotPoint, int pri, double radius, int grid_idx, int ingrid_idx);
-	void insert_in_gap_corner(Point2D pivotPoint, Point2D conflictPoint, double radius);
+	void process_pivot_point_corner(Point2D& pivotPoint, int pri, Float radius, int grid_idx, int ingrid_idx);
+	void insert_in_gap_corner(Point2D pivotPoint, Point2D conflictPoint, Float radius);
 
 
 	//wrapper function, this function eliminate all conflict points, insert points at once.
-	void eliminate_for_maximal_batch(double radius);
-	void process_pivot_point_batch(Point2D& pivotPoint, int pri, double radius, int grid_idx, int ingrid_idx);
-	void insert_in_gap_batch(Point2D pivotPoint, vector<Point2D> conflictPoint, double radius);
+	void eliminate_for_maximal_batch(Float radius);
+	void process_pivot_point_batch(Point2D& pivotPoint, int pri, Float radius, int grid_idx, int ingrid_idx);
+	void insert_in_gap_batch(Point2D pivotPoint, vector<Point2D> conflictPoint, Float radius);
 
 	//attention: parameter is radius
-	void test_maximal(double radius);
+	void test_maximal(Float radius);
 
 	int getCount(){int count = 0;
 		for (int i = 0; i < dimension_edge*dimension_edge; i++){
@@ -115,12 +115,12 @@ public:
 
 	//bbox with actual coordinate
 	BBox gridBbox;
-	float w_f;
-	float h_f;
+	Float w_f;
+	Float h_f;
 
-	double itval;
-	double itval_w;
-	double itval_h;
+	Float itval;
+	Float itval_w;
+	Float itval_h;
 };
 
 #endif

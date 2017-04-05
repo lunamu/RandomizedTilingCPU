@@ -7,7 +7,7 @@ UniformGridsCompact::UniformGridsCompact()
 {
 }
 
-UniformGridsCompact::UniformGridsCompact(double radius, vector<Point2D> input_points)
+UniformGridsCompact::UniformGridsCompact(Float radius, vector<Point2D> input_points)
 {
 	int base_dimension = 1.0 / radius;
 	

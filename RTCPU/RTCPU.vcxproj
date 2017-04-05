@@ -70,13 +70,21 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
-    <SourcePath>../src;$(SourcePath)</SourcePath>
+    <SourcePath>../src;$(IncludePath)</SourcePath>
     <IncludePath>../src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
-    <SourcePath>../src;$(SourcePath)</SourcePath>
+    <SourcePath>../src;$(IncludePath)</SourcePath>
     <IncludePath>../src;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>../src;$(IncludePath)</IncludePath>
+    <SourcePath>../src;$(IncludePath)</SourcePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>../src;$(IncludePath)</IncludePath>
+    <SourcePath>../src;$(IncludePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -123,14 +131,12 @@
     <ClCompile Include="..\src\RandomizedTiling.cpp" />
     <ClCompile Include="..\src\Tiller.cpp" />
     <ClCompile Include="..\src\UniformGrids.cpp" />
-    <ClCompile Include="..\src\UniformGridsCompact.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\KD_tree.h" />
     <ClInclude Include="..\src\RandomizedTiling.h" />
     <ClInclude Include="..\src\Tiller.h" />
     <ClInclude Include="..\src\UniformGrids.h" />
-    <ClInclude Include="..\src\UniformGridsCompact.h" />
     <ClInclude Include="..\src\UtilsDefs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

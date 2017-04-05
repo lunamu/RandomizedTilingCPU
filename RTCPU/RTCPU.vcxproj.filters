@@ -27,9 +27,6 @@
     <ClCompile Include="..\src\Tiller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\UniformGridsCompact.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\KD_tree.h">
@@ -45,9 +42,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Tiller.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\UniformGridsCompact.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

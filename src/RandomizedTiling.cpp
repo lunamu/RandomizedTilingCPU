@@ -30,16 +30,10 @@ KDnode* kd_tree;
 //argv[1]: filename of the pattern input
 //argv[2]: filename of the maximal poisson disk sampling result
 
-
-
-
-
-
-
 int main(int argc, char* argv[])
 {
-	float ratio = atof(argv[3]);
-	double radius = 0.005 / ratio;
+	Float ratio = atof(argv[3]);
+	Float radius = 0.005 / ratio;
 	srand(0);
 	//srand((unsigned)time(NULL));
 	string pattern_dir = argv[1];
@@ -89,16 +83,16 @@ int main(int argc, char* argv[])
 		if (tiller.priority[i] == 2)p2 << tiller.result[i].x << " " << tiller.result[i].y << endl;*/
 		tiller.points_in_grid.insert(tiller.result[i], tiller.priority[i]);
 	}
-	ofstream num(result_dir + "num");
+	/*ofstream num(result_dir + "num");
 	for (int i = 0; i < tiller.points_in_grid.dimension_edge * tiller.points_in_grid.dimension_edge; i++)
 	{
 		num << tiller.points_in_grid.grids[i].num << endl;
-	}
+	}*/
 
 	start = clock(), diff;
 	//Timing
 	tiller.eliminate_for_maximal(radius);
-	tiller.test_conflict(radius);
+	
 	//points_in_grid.eliminate_for_maximal_batch(radius);
 
 	
@@ -107,10 +101,8 @@ int main(int argc, char* argv[])
 	msec = diff * 1000 / CLOCKS_PER_SEC;
 	//printf("%d %d\n", count, msec);
 	printf("Points:%d\nEliminate for Maximal take %d seconds %d milliseconds\n",count, msec / 1000, msec % 1000);
-
+	tiller.test_conflict(radius);
 	tiller.printToFile(result_dir+"a");
-
-
 
 	tiller.test_maximal(radius);
 

@@ -20,7 +20,7 @@ class UniformGridsCompact
 {
 public:
 	UniformGridsCompact();
-	UniformGridsCompact(double radius,vector<Point2D> input_points);
+	UniformGridsCompact(Float radius,vector<Point2D> input_points);
 	~UniformGridsCompact() {};
 
 	inline unsigned int SpatialToIdx(Point2D point) { return (unsigned int)(((int)((point.y - gridBbox.ymin)*height)) * width + (point.x - gridBbox.xmin) * width); }
@@ -39,8 +39,8 @@ public:
 
 	//bbox with actual coordinate
 	BBox gridBbox;
-	float w_f;
-	float h_f;
+	Float w_f;
+	Float h_f;
 
 	int dim;
 	int width;

@@ -1,6 +1,6 @@
 #include<tiller.h>
 
-inline int dimensionCheck(BBox bbox, double r)//consider leave a minimum leaf node.
+inline int dimensionCheck(BBox bbox, Float r)//consider leave a minimum leaf node.
 {
 	int x = 0; int y = 0;
 	if (bbox.xmax - bbox.xmin > LEAFLEN)
@@ -16,7 +16,7 @@ inline int dimensionCheck(BBox bbox, double r)//consider leave a minimum leaf no
 	else if (y == 1) return YAXIS;
 	else return 9;
 }
-void Tiller::test_conflict(double radius)
+void Tiller::test_conflict(Float radius)
 {
 	ofstream gap_file(result_dir + "conf");
 	for (int grid_idx = 0; grid_idx < points_in_grid.width * points_in_grid.height; grid_idx++)
@@ -37,7 +37,7 @@ void Tiller::test_conflict(double radius)
 
 
 }
-void Tiller::test_maximal(double radius)
+void Tiller::test_maximal(Float radius)
 {
 	//for each valid point in the grid, search range 4*r
 	//test if circum center within 2*r from any points.
@@ -65,7 +65,7 @@ void Tiller::test_maximal(double radius)
 						auto fp = *first_point;
 						auto sp = *second_point;
 						Point2D center;
-						double cir_r2;
+						Float cir_r2;
 						Circumcenter(cur_point, fp, sp, center, cir_r2);
 						//if (cir_r2 > 16 * range * range)continue;
 						bool same;
@@ -86,17 +86,8 @@ void Tiller::test_maximal(double radius)
 }
 
 
-void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, double radius, int depth)
+void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, Float radius, int depth)
 {
-	//vector<Point2D> pointTestBuffer;
-	/*if (depth == 0)
-	{
-		points_in_grid.dartSearch_buffer(conflictPoint, 4 * radius, pointTestBuffer);
-		pointTestBuffer.push_back(pivotPoint);
-	}*/
-	
-	//vector<Point2D> ptb;
-
 	if (depth == 0)
 	{
 		points_in_grid.dartSearch_buffer(conflictPoint, 4 * radius, pointTestBuffer);
@@ -112,7 +103,7 @@ void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, double rad
 			{
 				if (i == j || j == k || i == k)continue;
 				Point2D fp = pointTestBuffer[k]; Point2D sp = pointTestBuffer[i]; Point2D tp = pointTestBuffer[j];
-				Point2D center; double cir_r2;
+				Point2D center; Float cir_r2;
 				if (Circumcenter(fp, sp, tp, center, cir_r2))
 				{
 					if (center.x > points_in_grid.gridBbox.xmax || center.x < points_in_grid.gridBbox.xmin || center.y > points_in_grid.gridBbox.ymax || center.y < points_in_grid.gridBbox.ymin)continue;
@@ -120,7 +111,7 @@ void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, double rad
 					{
 						points_in_grid.insert(center);
 						//return;
-						//insert_in_gap(center, center, radius, depth + 1);
+						insert_in_gap(center, center, radius, depth + 1);
 						//points_in_grid.dartSearch_other(center, 2 * radius);
 						//points_in_grid.dartSearch(center, 2 * radius);
 						//pointTestBuffer.push_back(center);
@@ -135,72 +126,8 @@ void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, double rad
 			}
 		}
 	}
-	return;
-	//for (int k = pointTestBuffer.size() - 1; k >= 2; k--)
-	//{
-	//	for (int i = k - 1; i >= 1; i--)
-	//	{
-	//		for (int j = i - 1; j >= 0; j--)
-	//		{
-	//			if (i == j || j == k || i == k)continue;
-	//			Point2D fp = pointTestBuffer[k]; Point2D sp = pointTestBuffer[i]; Point2D tp = pointTestBuffer[j];
-	//			Point2D center; double cir_r2;
-	//			if (Circumcenter(fp, sp, tp, center, cir_r2))
-	//			{
-	//				if (center.x > points_in_grid.gridBbox.xmax || center.x < points_in_grid.gridBbox.xmin || center.y > points_in_grid.gridBbox.ymax || center.y < points_in_grid.gridBbox.ymin)continue;
-	//				if (points_in_grid.dartSearch_other(center, 2 * radius))
-	//				{
-	//					points_in_grid.insert(center);
-	//					//points_in_grid.dartSearch_other(center, 2 * radius);
-	//					//points_in_grid.dartSearch(center, 2 * radius);
-	//					//pointTestBuffer.push_back(center);
-	//					//return;
-	//					//pivotPoint = center;
-	//					//return;
-	//					
-	//				}
-	//			}
-	//			else continue;
-
-	//		}
-	//	}
-	//}
 	//return;
 	//
-//vector<Point2D> center_buf;
-//label:
-//	for (int k = pointTestBuffer.size() - 1; k >= 2; k--)
-//	{
-//		for (int i = k - 1; i >= 1; i--)
-//		{
-//			for (int j = i - 1; j >= 0; j--)
-//			{
-//				if (i == j || j == k || i == k)continue;
-//				Point2D fp = pointTestBuffer[k]; Point2D sp = pointTestBuffer[i]; Point2D tp = pointTestBuffer[j];
-//				Point2D center; double cir_r2;
-//				if (Circumcenter(fp, sp, tp, center, cir_r2))
-//				{					
-//					if (center.x > points_in_grid.gridBbox.xmax || center.x < points_in_grid.gridBbox.xmin || center.y > points_in_grid.gridBbox.ymax || center.y < points_in_grid.gridBbox.ymin)continue;
-//					if (points_in_grid.dartSearch_other(center, 2 * radius))
-//					{
-//						points_in_grid.insert(center);
-//						//points_in_grid.dartSearch_other(center, 2 * radius);
-//						//points_in_grid.dartSearch(center, 2 * radius);
-//						//pointTestBuffer.push_back(center);
-//						//return;
-//						//pivotPoint = center;
-//						//return;
-//					    goto label;
-//					}
-//				}
-//				else continue;
-//
-//			}
-//		}
-//	}
-//	return;
-//	//
-
 	//for (auto first_point = pointTestBuffer.begin(); first_point != pointTestBuffer.end(); first_point++)
 	//{
 	//	for (auto second_point = first_point + 1; second_point != pointTestBuffer.end(); second_point++)
@@ -209,11 +136,11 @@ void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, double rad
 	//		auto fp = *first_point;
 	//		auto sp = *second_point;
 	//		Point2D center;
-	//		double cir_r2;
+	//		Float cir_r2;
 	//		Circumcenter(pivotPoint, fp, sp, center, cir_r2);
 	//		//if (cir_r2 > 16 * radius * radius)continue;
 	//		if (center.x > points_in_grid.gridBbox.xmax || center.x < points_in_grid.gridBbox.xmin || center.y > points_in_grid.gridBbox.ymax || center.y < points_in_grid.gridBbox.ymin)continue;
-	//		else if (points_in_grid.dartSearch(center, 2 * radius))
+	//		else if (points_in_grid.dartSearch_other(center, 2 * radius))
 	//		{
 	//			points_in_grid.insert(center);
 	//			pointTestBuffer.push_back(center);
@@ -228,7 +155,7 @@ void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, double rad
 	//					auto f11 = *f1;
 	//					auto f22 = *f2;
 	//					Point2D c;
-	//					double cr2;
+	//					Float cr2;
 	//					Circumcenter(center, f11, f22, c, cr2);
 	//					if (c.x > points_in_grid.gridBbox.xmax || c.x < points_in_grid.gridBbox.xmin || c.y > points_in_grid.gridBbox.ymax || c.y < points_in_grid.gridBbox.ymin)continue;
 	//					else if (points_in_grid.dartSearch(c, 2 * radius))
@@ -245,7 +172,7 @@ void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, double rad
 	//}
 }
 
-void Tiller::process_pivot_point(Point2D& pivotPoint, int pri, double radius, int grid_idx, int ingrid_idx, int chain)
+void Tiller::process_pivot_point(Point2D& pivotPoint, int pri, Float radius, int grid_idx, int ingrid_idx, int chain)
 {
 
 	conflictBuffer.clear();
@@ -272,18 +199,17 @@ void Tiller::process_pivot_point(Point2D& pivotPoint, int pri, double radius, in
 		int gidx = conflictGrididx[i];
 		int iidx = conflictIngrid_idx[i];
 		points_in_grid.grids[gidx].valid[iidx] = INVALID;	//eliminate;
-		if (chain > 2)
+		/*if (chain > 2)
 		{
 			chain_points.push_back(pivotPoint);
-		}
+		}*/
 		int depth = 0;
-
 		insert_in_gap(pivotPoint, conflictBuffer[i], radius, depth);
 		pointTestBuffer.clear();
 	}
 }
 
-void Tiller::eliminate_for_maximal(double radius)
+void Tiller::eliminate_for_maximal(Float radius)
 {
 	for (int grid_idx = 0; grid_idx < points_in_grid.width * points_in_grid.height; grid_idx++)
 	{
@@ -299,7 +225,8 @@ void Tiller::eliminate_for_maximal(double radius)
 				process_pivot_point(cur_point, cur_pri, radius, grid_idx, in_idx, chain);
 			}
 		}
-	}/*
+	}
+	/*
 	ofstream chain(result_dir + "chain");
 	for (int i = 0; i < chain_points.size(); i++)
 	{
@@ -307,7 +234,7 @@ void Tiller::eliminate_for_maximal(double radius)
 	}*/
 }
 
-void Tiller::traverse_and_classify(KDnode*root, BBox query, Point2D offset, float ratio)
+void Tiller::traverse_and_classify(KDnode*root, BBox query, Point2D offset, Float ratio)
 {
 	if (withinBox(query, root->cell_bbox))
 	{
@@ -322,10 +249,8 @@ void Tiller::traverse_and_classify(KDnode*root, BBox query, Point2D offset, floa
 			tmp_p.x += offset.x;
 			tmp_p.y += offset.y;
 
-
 			//if (within(primary_right, tmp_p) || within(primary_down, tmp_p))result.push_back(tmp_p);
 			if (!within(ide, tmp_p))continue;
-
 			result.push_back(tmp_p);
 			if (within(secondary_left, tmp_p) || within(secondary_up, tmp_p)) {
 				priority.push_back(0);
@@ -417,7 +342,7 @@ void Tiller::traverse_and_classify(KDnode*root, BBox query, Point2D offset, floa
 }
 
 
-void Tiller::DivideConquerTiling(BBox bbox, double r, int axis, float ratio)
+void Tiller::DivideConquerTiling(BBox bbox, Float r, int axis, Float ratio)
 {
 
 	if (dimensionCheck(bbox, r) == ALL || dimensionCheck(bbox, r) == axis)
@@ -474,14 +399,14 @@ void Tiller::DivideConquerTiling(BBox bbox, double r, int axis, float ratio)
 	}
 	else
 	{
-		double area = (bbox.xmax - bbox.xmin) * (bbox.ymax - bbox.ymin);
+		Float area = (bbox.xmax - bbox.xmin) * (bbox.ymax - bbox.ymin);
 		//genPoints(points, bbox, area, r);
 
 		//rest is to use tiling
-		double len = bbox.xmax - bbox.xmin + 4 * r;
-		double height = bbox.ymax - bbox.ymin + 4 * r;
-		double new_xmin = IntervalUniform(0.0, 1.0 - ratio * len);
-		double new_ymin = IntervalUniform(0.0, 1.0 - ratio * height);
+		Float len = bbox.xmax - bbox.xmin + 4 * r;
+		Float height = bbox.ymax - bbox.ymin + 4 * r;
+		Float new_xmin = IntervalUniform(0.0, 1.0 - ratio * len);
+		Float new_ymin = IntervalUniform(0.0, 1.0 - ratio * height);
 		BBox ratioBbox(new_xmin, new_xmin + ratio * len, new_ymin, new_ymin + ratio * height);
 
 		//Primary & Secondary box
@@ -495,10 +420,10 @@ void Tiller::DivideConquerTiling(BBox bbox, double r, int axis, float ratio)
 
 
 		//rest is to use regular tiling
-		//double len = bbox.xmax - bbox.xmin;
-		//double height = bbox.ymax - bbox.ymin;
-		//double new_xmin = 0.0;// IntervalUniform(0.0, 1.0 - ratio * len);
-		//double new_ymin = 0.0;
+		//Float len = bbox.xmax - bbox.xmin;
+		//Float height = bbox.ymax - bbox.ymin;
+		//Float new_xmin = 0.0;// IntervalUniform(0.0, 1.0 - ratio * len);
+		//Float new_ymin = 0.0;
 		//BBox ratioBbox(new_xmin, new_xmin + ratio * len, new_ymin, new_ymin + ratio * height);
 		//tilePoints(ratioBbox, points, Point2D(bbox.xmin, bbox.ymin));
 
