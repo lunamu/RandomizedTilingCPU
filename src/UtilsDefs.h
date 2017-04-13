@@ -19,7 +19,7 @@ using namespace std;
 //How wide is the tile.
 #define LEAFLEN (40*r)
 
-#define Float double
+#define Float float
 
 
 inline Float min_(Float a, Float b)

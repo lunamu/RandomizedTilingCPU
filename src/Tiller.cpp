@@ -94,6 +94,7 @@ void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, Float radi
 		pointTestBuffer.push_back(pivotPoint);
 	}
 	if (pointTestBuffer.size() < 2)return;
+	if (depth >= 4)return;
 	for (int k = pointTestBuffer.size() - 1; k >= 2; k--)
 	{
 		for (int i = k - 1; i >= 1; i--)
@@ -111,10 +112,11 @@ void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, Float radi
 					{
 						points_in_grid.insert(center);
 						//return;
+						pointTestBuffer.push_back(center);
 						insert_in_gap(center, center, radius, depth + 1);
 						//points_in_grid.dartSearch_other(center, 2 * radius);
 						//points_in_grid.dartSearch(center, 2 * radius);
-						//pointTestBuffer.push_back(center);
+						
 						//return;
 						//pivotPoint = center;
 						//return;
