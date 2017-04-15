@@ -104,7 +104,17 @@ int main(int argc, char* argv[])
 	tiller.test_conflict(radius);
 	tiller.printToFile(result_dir+"a");
 
+
+	//see how many rounds we need to get the result correct.
+	while (!tiller.is_maximal(radius))
+	{
+		tiller.global_filling(radius);
+	}
+	
 	tiller.test_maximal(radius);
+
+
+
 
 	UniformGrids ugrids(1.0 / (2 * 0.005));
 	for (int i = 0; i < pattern.size(); i++)

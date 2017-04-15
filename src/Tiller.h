@@ -30,7 +30,10 @@ public:
 		points_in_grid.printToFile(output_file_name);
 	}
 	void test_maximal(Float radius);
+	bool is_maximal(Float radius);
 	void test_conflict(Float radius);
+	void global_filling(Float radius);
+
 	BBox bbox;
 	KDnode* kd_tree;
 	UniformGrids points_in_grid;

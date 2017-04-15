@@ -86,6 +86,53 @@ void Tiller::test_maximal(Float radius)
 }
 
 
+bool Tiller::is_maximal(Float radius)
+{
+	//for each valid point in the grid, search range 4*r
+	//test if circum center within 2*r from any points.
+	//for each valid point in the grid, search range 4*r
+	//test if circum center within 2*r from any points.
+	ofstream gap_file(result_dir + "gap_points");
+	for (int grid_idx = 0; grid_idx < points_in_grid.width * points_in_grid.height; grid_idx++)
+	{
+		for (int in_idx = 0; in_idx < points_in_grid.grids[grid_idx].num; in_idx++)//iteration of all points
+		{
+			if (points_in_grid.grids[grid_idx].valid[in_idx])
+			{
+				Point2D& cur_point = points_in_grid.grids[grid_idx].points[in_idx];
+				vector<Point2D> conflictBuffer;
+				vector<int> conflictPri;
+				vector<int> conflictGrididx;
+				vector<int> conflictIngrid_idx;
+				points_in_grid.dartSearch_buffer_pri(cur_point, 4 * radius, conflictBuffer, conflictPri, conflictGrididx, conflictIngrid_idx);
+
+				for (auto first_point = conflictBuffer.begin(); first_point != conflictBuffer.end(); first_point++)
+				{
+					for (auto second_point = first_point + 1; second_point != conflictBuffer.end(); second_point++)
+					{
+						if (first_point == second_point) continue;
+						auto fp = *first_point;
+						auto sp = *second_point;
+						Point2D center;
+						Float cir_r2;
+						Circumcenter(cur_point, fp, sp, center, cir_r2);
+						//if (cir_r2 > 16 * range * range)continue;
+						bool same;
+						if (center.x > points_in_grid.gridBbox.xmax || center.x < points_in_grid.gridBbox.xmin || center.y > points_in_grid.gridBbox.ymax || center.y < points_in_grid.gridBbox.ymin)continue;
+						else if (points_in_grid.dartSearch(center, 2 * radius, same))
+						{
+							if (!same)return false;
+						}
+
+					}
+				}
+			}
+
+		}
+
+	}
+	return true;
+}
 void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, Float radius, int depth)
 {
 	if (depth == 0)
@@ -111,7 +158,7 @@ void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, Float radi
 					if (points_in_grid.dartSearch_other(center, 2 * radius))
 					{
 						points_in_grid.insert(center);
-						//return;
+						return;
 						pointTestBuffer.push_back(center);
 						insert_in_gap(center, center, radius, depth + 1);
 						//points_in_grid.dartSearch_other(center, 2 * radius);
@@ -433,3 +480,54 @@ void Tiller::DivideConquerTiling(BBox bbox, Float r, int axis, Float ratio)
 	}
 }
 
+
+void Tiller::global_filling(Float radius)
+{
+	//for each valid point in the grid, search range 4*r
+	//test if circum center within 2*r from any points.
+	//if not, insert the point.
+	ofstream gap_file(result_dir + "gap_points");
+	for (int grid_idx = 0; grid_idx < points_in_grid.width * points_in_grid.height; grid_idx++)
+	{
+		for (int in_idx = 0; in_idx < points_in_grid.grids[grid_idx].num; in_idx++)//iteration of all points
+		{
+			if (points_in_grid.grids[grid_idx].valid[in_idx])
+			{
+				Point2D& cur_point = points_in_grid.grids[grid_idx].points[in_idx];
+				vector<Point2D> conflictBuffer;
+				vector<int> conflictPri;
+				vector<int> conflictGrididx;
+				vector<int> conflictIngrid_idx;
+				points_in_grid.dartSearch_buffer_pri(cur_point, 4 * radius, conflictBuffer, conflictPri, conflictGrididx, conflictIngrid_idx);
+
+				for (auto first_point = conflictBuffer.begin(); first_point != conflictBuffer.end(); first_point++)
+				{
+					for (auto second_point = first_point + 1; second_point != conflictBuffer.end(); second_point++)
+					{
+						if (first_point == second_point) continue;
+						auto fp = *first_point;
+						auto sp = *second_point;
+						Point2D center;
+						Float cir_r2;
+						Circumcenter(cur_point, fp, sp, center, cir_r2);
+						//if (cir_r2 > 16 * range * range)continue;
+						bool same;
+						if (center.x > points_in_grid.gridBbox.xmax || center.x < points_in_grid.gridBbox.xmin || center.y > points_in_grid.gridBbox.ymax || center.y < points_in_grid.gridBbox.ymin)continue;
+						else if (points_in_grid.dartSearch(center, 2 * radius, same))
+						{
+							if (!same)
+							{
+								points_in_grid.insert(center);
+								//gap_file << center.x << " " << center.y << endl;
+							}
+						}
+
+					}
+				}
+			}
+
+		}
+
+	}
+	printf("done, gaps above\n");
+}
