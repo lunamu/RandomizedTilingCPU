@@ -32,7 +32,7 @@ public:
 	void test_maximal(Float radius);
 	bool is_maximal(Float radius);
 	void test_conflict(Float radius);
-	void global_filling(Float radius);
+	void global_filling(Float radius, vector<Point2D>& query_points, vector<Point2D>& next_batch);
 
 	BBox bbox;
 	KDnode* kd_tree;

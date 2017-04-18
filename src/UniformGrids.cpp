@@ -218,6 +218,41 @@ void UniformGrids::dartSearch_buffer_pri(Point2D point, Float range, vector<Poin
 	}
 }
 
+void UniformGrids::dartSearch_buffer_array(Point2D point, Float range, Point2D* conflictBuffer, int& conflict_num)
+{
+	conflict_num = 0;
+	unsigned int x_start = max(0, (point.x - range - gridBbox.xmin)) * width;
+	unsigned int x_end = min(gridBbox.xmax - EPS - gridBbox.xmin, (point.x + range - gridBbox.xmin)) * width;
+	unsigned int y_start = max(0, (point.y - range - gridBbox.ymin)) * height;
+	unsigned int y_end = min(gridBbox.ymax - EPS - gridBbox.ymin, (point.y + range - gridBbox.ymin)) * height;
+	for (int i = x_start; i <= x_end; i++)
+	{
+		for (int j = y_start; j <= y_end; j++)
+		{
+			unsigned int idx = dimension_edge * j + i;
+			if (grids[idx].num <= 0)
+			{
+				continue;
+			}
+			else
+			{
+				for (int i = 0; i < grids[idx].num; i++)
+				{
+					if (!grids[idx].valid[i])continue;
+
+					if (DistanceSquared(point, grids[idx].points[i]) == 0.0)continue;
+
+					else if (DistanceSquared(point, grids[idx].points[i]) < range * range)
+					{
+						conflictBuffer[conflict_num++] = grids[idx].points[i];						
+					}
+				}
+			}
+		}
+	}
+}
+
+
 void UniformGrids:: dartSearch_buffer(Point2D point, Float range, vector<Point2D>& buf)
 {
 	unsigned int x_start = max(0, (point.x - range - gridBbox.xmin)) * width;
@@ -251,11 +286,44 @@ void UniformGrids:: dartSearch_buffer(Point2D point, Float range, vector<Point2D
 	}
 }
 
+void UniformGrids::ringSearch_array(Point2D point, Float range_inner, Float range_outer, Point2D* buf, int& conflict_num)
+{
+	conflict_num = 0;
+	unsigned int x_start = max(0, (point.x - range_outer - gridBbox.xmin)) * width;
+	unsigned int x_end = min(gridBbox.xmax - EPS - gridBbox.xmin, (point.x + range_outer - gridBbox.xmin)) * width;
+	unsigned int y_start = max(0, (point.y - range_outer - gridBbox.ymin)) * height;
+	unsigned int y_end = min(gridBbox.ymax - EPS - gridBbox.ymin, (point.y + range_outer - gridBbox.ymin)) * height;
+	for (int x = x_start; x <= x_end; x++)
+	{
+		for (int y = y_start; y <= y_end; y++)
+		{
+			unsigned int idx = dimension_edge * y + x;
+			if (grids[idx].num <= 0)
+			{
+				continue;
+			}
+			else
+			{
+				for (int i = 0; i < grids[idx].num; i++)
+				{
+					if (!grids[idx].valid[i])continue;
 
+					if (DistanceSquared(point, grids[idx].points[i]) == 0.0)continue;
+
+					else if ((DistanceSquared(point, grids[idx].points[i]) < range_outer * range_outer) && (DistanceSquared(point, grids[idx].points[i]) >  range_inner * range_inner))
+					{
+						buf[conflict_num++] = grids[idx].points[i];
+					}
+				}
+			}
+		}
+	}
+}
 void UniformGrids::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, Float radius)
 {
-	vector<Point2D> pointTestBuffer;
-	ringSearch_buffer(conflictPoint, 2 * radius, 4 * radius, pointTestBuffer);
+	Point2D pointTestBuffer[20];
+	int conflict_num;
+	ringSearch_array(conflictPoint, 2 * radius, 4 * radius, pointTestBuffer, conflict_num);
 	//cout << "PointTestBuffer:" << endl;
 	//for (int i = 0; i < pointTestBuffer.size(); i++)
 	//{
@@ -263,13 +331,13 @@ void UniformGrids::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, Floa
 	//}
 	//Here let's try 
 	//First, fill all from pivot point
-	for (auto first_point = pointTestBuffer.begin(); first_point != pointTestBuffer.end(); first_point++)
+	for (int fp_idx = 0; fp_idx < conflict_num-1; fp_idx++)
 	{
-		for (auto second_point = first_point + 1; second_point != pointTestBuffer.end(); second_point++)
+		for (int sp_idx = fp_idx + 1; sp_idx <conflict_num; sp_idx++)
 		{
-			if (first_point == second_point) continue;
-			auto fp = *first_point;
-			auto sp = *second_point;
+			if (fp_idx == sp_idx) continue;
+			auto fp = pointTestBuffer[fp_idx];
+			auto sp = pointTestBuffer[sp_idx];
 			Point2D center;
 			Float cir_r2;
 			Circumcenter(pivotPoint, fp, sp, center, cir_r2);

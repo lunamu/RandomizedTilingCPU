@@ -51,7 +51,9 @@ public:
 	//push all conflict points to conflictbuffer, record their priority, grididx and in_grid idx;
 	void dartSearch_buffer_pri(Point2D point, Float range, vector<Point2D>& conflictBuffer,
 		vector<int>& conflictPri, vector<int>& conflictGrididx, vector<int>& conflictIngrid_idx);
-	
+
+	void dartSearch_buffer_array(Point2D point, Float range, Point2D* conflictBuffer, int& conflict_num);
+	void ringSearch_array(Point2D point, Float range_inner, Float range_outer, Point2D* buf, int& conflict_num);
 	//insert in the gap, for pivot point and its corresponding conflict points
 	void insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, Float radius);
 

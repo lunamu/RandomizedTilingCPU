@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
 		num << tiller.points_in_grid.grids[i].num << endl;
 	}*/
 
-	start = clock(), diff;
+	start = clock();
 	//Timing
 	tiller.eliminate_for_maximal(radius);
 	
@@ -99,22 +99,44 @@ int main(int argc, char* argv[])
 	int count = tiller.getGridCount();
 	diff = clock() - start;
 	msec = diff * 1000 / CLOCKS_PER_SEC;
-	//printf("%d %d\n", count, msec);
-	printf("Points:%d\nEliminate for Maximal take %d seconds %d milliseconds\n",count, msec / 1000, msec % 1000);
-	tiller.test_conflict(radius);
-	tiller.printToFile(result_dir+"a");
-
+	printf("Points:%d\nEliminate for Maximal take %d seconds %d milliseconds\n", count, msec / 1000, msec % 1000);
 
 	//see how many rounds we need to get the result correct.
-	while (!tiller.is_maximal(radius))
+	start = clock();
+	int ct = 0;
+	int num_inserted;
+	vector<Point2D> point_batch;//points to be processed by global filling(because they are involved)
+	vector<Point2D> next_batch;
+	for (int grid_idx = 0; grid_idx < tiller.points_in_grid.width * tiller.points_in_grid.height; grid_idx++)
 	{
-		tiller.global_filling(radius);
+		for (int in_idx = 0; in_idx < tiller.points_in_grid.grids[grid_idx].num; in_idx++)//iteration of all points
+		{
+			if (tiller.points_in_grid.grids[grid_idx].priority[in_idx] < 0)continue;
+			if (tiller.points_in_grid.grids[grid_idx].valid[in_idx])
+			{				
+				point_batch.push_back(tiller.points_in_grid.grids[grid_idx].points[in_idx]);
+			}
+		}
 	}
+
+	do
+	{		
+		tiller.global_filling(radius, point_batch, next_batch);
+		printf("Iteration:%d, points_inserted:%d\n", ct, next_batch.size());
+		point_batch.swap(next_batch);
+		next_batch.clear();
+		ct++;
+		if (ct > 8)break;
+	} while (next_batch.size() != 0);
 	
-	tiller.test_maximal(radius);
-
-
-
+	diff = clock() - start;
+	msec = diff * 1000 / CLOCKS_PER_SEC;
+	printf("%d iterations, Global filling taken %d seconds %d milliseconds\n", ct,  msec / 1000, msec % 1000);
+	
+	
+	//tiller.test_maximal(radius);	
+	//tiller.test_conflict(radius);
+	tiller.printToFile(result_dir + "a");
 
 	UniformGrids ugrids(1.0 / (2 * 0.005));
 	for (int i = 0; i < pattern.size(); i++)
@@ -123,7 +145,5 @@ int main(int argc, char* argv[])
 	}
 	//ugrids.test_maximal(0.005);
 
-
-	cin >> diff;
 
 }
