@@ -23,6 +23,16 @@ struct Grid
 };
 const Float EPS = 0.0000001;
 
+
+struct PointRecurStruct
+{
+	Point2D p;
+	int gidx;
+	int igidx;
+	int pri;
+};
+
+
 //2D UniformGrids class
 class UniformGrids
 {
@@ -52,6 +62,7 @@ public:
 	void dartSearch_buffer_pri(Point2D point, Float range, vector<Point2D>& conflictBuffer,
 		vector<int>& conflictPri, vector<int>& conflictGrididx, vector<int>& conflictIngrid_idx);
 
+	void dartSearch_buffer_pri_array(Point2D point, Float range, PointRecurStruct* conflictBuffer, int& conflict_num);
 	void dartSearch_buffer_array(Point2D point, Float range, Point2D* conflictBuffer, int& conflict_num);
 	void ringSearch_array(Point2D point, Float range_inner, Float range_outer, Point2D* buf, int& conflict_num);
 	//insert in the gap, for pivot point and its corresponding conflict points

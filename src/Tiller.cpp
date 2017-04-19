@@ -135,19 +135,14 @@ bool Tiller::is_maximal(Float radius)
 }
 void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, Float radius, int depth)
 {
-	Point2D ptBuffer[100];
+	Point2D ptBuffer[20];
 	int conflict_num;
-	//if (depth == 0)
-	{
-		//points_in_grid.dartSearch_buffer(conflictPoint, 4 * radius, pointTestBuffer);
-		points_in_grid.dartSearch_buffer_array(conflictPoint, 4 * radius, ptBuffer, conflict_num);
-		//pointTestBuffer.push_back(pivotPoint);
-	}
-	//if (pointTestBuffer.size() < 2)return;
-	if (conflict_num < 2) return;
+	points_in_grid.dartSearch_buffer_array(conflictPoint, 4 * radius, ptBuffer, conflict_num);
+	
+	//if (conflict_num < 2) return;
 	for (int fp_idx = 0; fp_idx < conflict_num - 1; fp_idx++)
 	{
-		for (int sp_idx = fp_idx + 1; fp_idx < conflict_num; sp_idx++)
+		for (int sp_idx = fp_idx + 1; sp_idx < conflict_num; sp_idx++)
 		{
 			if (fp_idx == sp_idx)continue;
 			Point2D fp = ptBuffer[fp_idx]; Point2D sp = ptBuffer[sp_idx];
@@ -158,115 +153,31 @@ void Tiller::insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, Float radi
 				if (points_in_grid.dartSearch_other(center, 2 * radius))
 				{
 					points_in_grid.insert(center);
-					return;
-					//pointTestBuffer.push_back(center);
-					//insert_in_gap(center, center, radius, depth + 1);
-					//points_in_grid.dartSearch_other(center, 2 * radius);
-					//points_in_grid.dartSearch(center, 2 * radius);
-
-					//return;
-					//pivotPoint = center;
-					//return;
-
+					return; 
 				}
 			}
 			else continue;
 
 		}
 	}
-	//if (depth >= 4)return;
-	//for (int k = pointTestBuffer.size() - 1; k >= 2; k--)
-	//{
-	//	for (int i = k - 1; i >= 1; i--)
-	//	{
-	//		for (int j = i - 1; j >= 0; j--)
-
-	//		{
-	//			if (i == j || j == k || i == k)continue;
-	//			Point2D fp = pointTestBuffer[k]; Point2D sp = pointTestBuffer[i]; Point2D tp = pointTestBuffer[j];
-	//			Point2D center; Float cir_r2;
-	//			if (Circumcenter(fp, sp, tp, center, cir_r2))
-	//			{
-	//				if (center.x > points_in_grid.gridBbox.xmax || center.x < points_in_grid.gridBbox.xmin || center.y > points_in_grid.gridBbox.ymax || center.y < points_in_grid.gridBbox.ymin)continue;
-	//				if (points_in_grid.dartSearch_other(center, 2 * radius))
-	//				{
-	//					points_in_grid.insert(center);
-	//					return;
-	//					//pointTestBuffer.push_back(center);
-	//					//insert_in_gap(center, center, radius, depth + 1);
-	//					//points_in_grid.dartSearch_other(center, 2 * radius);
-	//					//points_in_grid.dartSearch(center, 2 * radius);
-	//					
-	//					//return;
-	//					//pivotPoint = center;
-	//					//return;
-	//					
-	//				}
-	//			}
-	//			else continue;
-
-	//		}
-	//	}
-	//}
-	//return;
-	//
-	//for (auto first_point = pointTestBuffer.begin(); first_point != pointTestBuffer.end(); first_point++)
-	//{
-	//	for (auto second_point = first_point + 1; second_point != pointTestBuffer.end(); second_point++)
-	//	{
-	//		if (first_point == second_point) continue;
-	//		auto fp = *first_point;
-	//		auto sp = *second_point;
-	//		Point2D center;
-	//		Float cir_r2;
-	//		Circumcenter(pivotPoint, fp, sp, center, cir_r2);
-	//		//if (cir_r2 > 16 * radius * radius)continue;
-	//		if (center.x > points_in_grid.gridBbox.xmax || center.x < points_in_grid.gridBbox.xmin || center.y > points_in_grid.gridBbox.ymax || center.y < points_in_grid.gridBbox.ymin)continue;
-	//		else if (points_in_grid.dartSearch_other(center, 2 * radius))
-	//		{
-	//			points_in_grid.insert(center);
-	//			pointTestBuffer.push_back(center);
-	//			//if (depth >= 0)return;
-	//			insert_in_gap(center, center, radius, depth+1);
-	//			return;
-	//			/*for (auto f1 = pointTestBuffer.begin(); f1 != pointTestBuffer.end(); f1++)
-	//			{
-	//				for (auto f2 = first_point + 1; f2 != pointTestBuffer.end(); f2++)
-	//				{
-	//					if (f1 == f2) continue;
-	//					auto f11 = *f1;
-	//					auto f22 = *f2;
-	//					Point2D c;
-	//					Float cr2;
-	//					Circumcenter(center, f11, f22, c, cr2);
-	//					if (c.x > points_in_grid.gridBbox.xmax || c.x < points_in_grid.gridBbox.xmin || c.y > points_in_grid.gridBbox.ymax || c.y < points_in_grid.gridBbox.ymin)continue;
-	//					else if (points_in_grid.dartSearch(c, 2 * radius))
-	//					{
-	//						points_in_grid.insert(c);
-	//					}
-	//				}
-	//			}
-	//			*/
-
-	//		}
-
-	//	}
-	//}
+	
 }
 
-void Tiller::process_pivot_point(Point2D& pivotPoint, int pri, Float radius, int grid_idx, int ingrid_idx, int chain)
+void Tiller::process_pivot_point(PointRecurStruct& pivotPointStruct, Float radius)
 {
-
+	PointRecurStruct conBuf[20];
+	int conflict_num;
+	/*
 	conflictBuffer.clear();
 	conflictPri.clear();
 	conflictGrididx.clear();
-	conflictIngrid_idx.clear();
-	points_in_grid.dartSearch_buffer_pri(pivotPoint, 2 * radius, conflictBuffer, conflictPri, conflictGrididx, conflictIngrid_idx);
-	for (int i = 0; i < conflictBuffer.size(); i++)
+	conflictIngrid_idx.clear();*/
+	points_in_grid.dartSearch_buffer_pri_array(pivotPointStruct.p, 2 * radius, conBuf, conflict_num);
+	for (int i = 0; i < conflict_num; i++)
 	{
-		if (conflictPri[i] > pri)
+		if (conBuf[i].pri > pivotPointStruct.pri)
 		{
-			process_pivot_point(conflictBuffer[i], conflictPri[i], radius, conflictGrididx[i], conflictIngrid_idx[i], chain + 1);
+			process_pivot_point(conBuf[i], radius);
 			return;
 		}
 	}
@@ -276,24 +187,20 @@ void Tiller::process_pivot_point(Point2D& pivotPoint, int pri, Float radius, int
 	{
 	cout << conflictBuffer[i].x << " " << conflictBuffer[i].y << endl;
 	}*/
-	for (int i = 0; i < conflictBuffer.size(); i++)
+	for (int i = 0; i < conflict_num; i++)
 	{
-		int gidx = conflictGrididx[i];
-		int iidx = conflictIngrid_idx[i];
+		int gidx = conBuf[i].gidx;
+		int iidx = conBuf[i].igidx;
 		points_in_grid.grids[gidx].valid[iidx] = INVALID;	//eliminate;
-		/*if (chain > 2)
-		{
-			chain_points.push_back(pivotPoint);
-		}*/
+		
 		int depth = 0;
-		insert_in_gap(pivotPoint, conflictBuffer[i], radius, depth);
-		pointTestBuffer.clear();
+		insert_in_gap(pivotPointStruct.p, conBuf[i].p, radius, depth);
 	}
 }
 
-void Tiller::eliminate_for_maximal(Float radius)
+void Tiller::thread_ops(float radius,int per_thread_ops, int start_offset, int size)
 {
-	for (int grid_idx = 0; grid_idx < points_in_grid.width * points_in_grid.height; grid_idx++)
+	for (int grid_idx = start_offset; (grid_idx <start_offset+ per_thread_ops) && (grid_idx <size); grid_idx++)
 	{
 		int num = points_in_grid.grids[grid_idx].num;
 		if (num > 0)
@@ -301,12 +208,35 @@ void Tiller::eliminate_for_maximal(Float radius)
 			for (int in_idx = 0; in_idx < num; in_idx++)//iteration of all points
 			{
 				if (!points_in_grid.grids[grid_idx].valid[in_idx])continue;
-				Point2D& cur_point = points_in_grid.grids[grid_idx].points[in_idx];
-				int cur_pri = points_in_grid.grids[grid_idx].priority[in_idx];
-				int chain = 0;
-				process_pivot_point(cur_point, cur_pri, radius, grid_idx, in_idx, chain);
+				PointRecurStruct cur_p;
+				cur_p.p = points_in_grid.grids[grid_idx].points[in_idx];
+				cur_p.pri = points_in_grid.grids[grid_idx].priority[in_idx];
+				cur_p.gidx = grid_idx;
+				cur_p.igidx = in_idx;
+				process_pivot_point(cur_p, radius);
 			}
 		}
+	}
+}
+
+void Tiller::eliminate_for_maximal(Float radius)
+{
+	int thread_num = 24;
+	int size = points_in_grid.width * points_in_grid.height;
+	int per_thread_ops = (size + thread_num) / thread_num;
+	int offsets[24];
+	for (int i = 0; i < thread_num; i++)
+	{
+		offsets[i] = per_thread_ops*i;
+	}
+	thread all_threads[24];
+	for (int i = 0; i < thread_num; i++)
+	{
+		all_threads[i] = thread(&Tiller::thread_ops, this, radius, per_thread_ops, offsets[i], size);
+	}
+	for (int i = 0; i < thread_num; i++)
+	{
+		all_threads[i].join();
 	}
 	/*
 	ofstream chain(result_dir + "chain");

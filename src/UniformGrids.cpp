@@ -217,8 +217,7 @@ void UniformGrids::dartSearch_buffer_pri(Point2D point, Float range, vector<Poin
 		}
 	}
 }
-
-void UniformGrids::dartSearch_buffer_array(Point2D point, Float range, Point2D* conflictBuffer, int& conflict_num)
+void UniformGrids::dartSearch_buffer_pri_array(Point2D point, Float range, PointRecurStruct* conflictBuffer, int& conflict_num)
 {
 	conflict_num = 0;
 	unsigned int x_start = max(0, (point.x - range - gridBbox.xmin)) * width;
@@ -244,7 +243,47 @@ void UniformGrids::dartSearch_buffer_array(Point2D point, Float range, Point2D* 
 
 					else if (DistanceSquared(point, grids[idx].points[i]) < range * range)
 					{
-						conflictBuffer[conflict_num++] = grids[idx].points[i];						
+						conflictBuffer[conflict_num].p = grids[idx].points[i];
+						conflictBuffer[conflict_num].pri = grids[idx].priority[i];
+						conflictBuffer[conflict_num].gidx = idx;
+						conflictBuffer[conflict_num].igidx = i;
+						conflict_num++;
+					}
+				}
+			}
+		}
+	}
+}
+
+
+void UniformGrids::dartSearch_buffer_array(Point2D point, Float range, Point2D* conflictBuffer, int& conflict_num)
+{
+	conflict_num = 0;
+	unsigned int x_start = max(0, (point.x - range - gridBbox.xmin)) * width;
+	unsigned int x_end = min(gridBbox.xmax - EPS - gridBbox.xmin, (point.x + range - gridBbox.xmin)) * width;
+	unsigned int y_start = max(0, (point.y - range - gridBbox.ymin)) * height;
+	unsigned int y_end = min(gridBbox.ymax - EPS - gridBbox.ymin, (point.y + range - gridBbox.ymin)) * height;
+	for (int i = x_start; i <= x_end; i++)
+	{
+		for (int j = y_start; j <= y_end; j++)
+		{
+			unsigned int idx = dimension_edge * j + i;
+			if (grids[idx].num <= 0)
+			{
+				continue;
+			}
+			else
+			{
+				int pn = grids[idx].num;
+				for (int i = 0; i < pn; i++)
+				{
+					if (!grids[idx].valid[i])continue;
+					Point2D testp = grids[idx].points[i];
+					float distsquared = DistanceSquared(point, testp);
+					if (distsquared == 0 ) continue;
+					else if (distsquared < range * range)
+					{
+						conflictBuffer[conflict_num++] = testp;
 					}
 				}
 			}

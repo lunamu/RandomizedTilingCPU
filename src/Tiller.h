@@ -16,7 +16,7 @@ public:
 	~Tiller() {};
 	void insert_in_gap(Point2D pivotPoint, Point2D conflictPoint, Float radius, int depth);
 	void eliminate_for_maximal(Float radius);
-	void process_pivot_point(Point2D& pivotPoint, int pri, Float radius, int grid_idx, int ingrid_idx, int chain);
+	void process_pivot_point(PointRecurStruct& pivotPointStruct, Float radius);
 	void DivideConquerTiling(BBox bbox, Float r, int axis, Float ratio);
 	void tilePoints(BBox bbox,Point2D offset, Float ratio){
 		traverse_and_classify(kd_tree,bbox, offset, ratio);
@@ -33,6 +33,8 @@ public:
 	bool is_maximal(Float radius);
 	void test_conflict(Float radius);
 	void global_filling(Float radius, vector<Point2D>& query_points, vector<Point2D>& next_batch);
+
+	void Tiller::thread_ops(float radius, int per_thread_ops, int start_offset, int size);
 
 	BBox bbox;
 	KDnode* kd_tree;

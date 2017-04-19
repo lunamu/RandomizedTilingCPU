@@ -10,6 +10,8 @@
 #include <random>
 #include <algorithm>
 #include <iterator>
+#include <thread>
+
 
 using namespace std;
 #define XAXIS 1
@@ -19,7 +21,7 @@ using namespace std;
 //How wide is the tile.
 #define LEAFLEN (40*r)
 
-#define Float double
+#define Float float
 
 
 inline Float min_(Float a, Float b)
